@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Happy Birthday</title>
+  <style>
+    body {
+      background: rgba(242, 219, 255, 1);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      font-size: 16px;
+    }
+
+    .container {
+      width: 90vw;
+      height: auto;
+      max-height: 80vh;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      overflow: hidden;
+    }
+
+    h1 {
+      font-family: 'Sacramento', cursive;
+      color: black;
+      font-size: 24px;
+    }
+
+    .letter {
+      width: 70%;
+      height: 350px;
+      font-family: 'Arial', sans-serif;
+    }
+
+    .rose {
+      width: 60px;
+      height: 120px;
+      position: absolute;
+      top: 0;
+      left: 75%;
+      transform: translateX(0%);
+      animation: yidon 5s infinite;
+    }
+
+    .petal {
+      width: 30px;
+      height: 30px;
+      background: mediumpurple;
+      border-radius: 0px 50%;
+      position: absolute;
+      box-shadow: 0 0 10px #D1123F;
+      z-index: 2;
+      transform-origin: bottom right;
+      animation: petal2 10s infinite;
+    }
+
+    .petal:nth-child(2) {
+      transform-origin: right bottom;
+      transform: rotate(90deg);
+      background: mediumpurple;
+      left: -5px;
+      animation: petal1 10s infinite;
+    }
+
+    .petal:nth-child(3) {
+      width: 25px;
+      height: 25px;
+      left: 5px;
+      top: -15px;
+      z-index: 1;
+      background: mediumpurple;
+      transform-origin: bottom right;
+      animation: petal2 10s infinite;
+    }
+
+    .petal:nth-child(4) {
+      transform: rotate(90deg);
+      width: 25px;
+      height: 25px;
+      left: 0px;
+      top: -15px;
+      z-index: 1;
+      background: mediumpurple;
+      transform-origin: bottom right;
+      animation: petal1 10s infinite;
+    }
+
+    .petal:nth-child(5) {
+      width: 30px;
+      height: 30px;
+      border-radius: 20px;
+      left: 15px;
+      top: -20px;
+      z-index: 0;
+      background: mediumpurple;
+    }
+
+    .leaf {
+      position: absolute;
+      top: 70px;
+      left: -70px;
+    }
+
+    .stem {
+      width: 160px;
+      height: 30px;
+      background: transparent;
+      border: 6px solid #8AC78A;
+      border-color: #77A377 transparent transparent transparent;
+      border-radius: 50% 50%;
+      transform: rotate(94deg);
+    }
+
+    .leafs {
+      width: 40px;
+      height: 30px;
+      border-radius: 0px 50%;
+      background: #77A377;
+      position: absolute;
+      top: 0;
+      left: 62px;
+      z-index: 49;
+      transform: rotate(5deg);
+    }
+
+    .leafs:nth-child(2) {
+      width: 30px;
+      height: 20px;
+      top: 25px;
+      left: 101px;
+      transform: rotate(290deg);
+    }
+
+    @keyframes yidon {
+      50% {
+        transform: translateY(35%);
+      }
+      100% {
+        transform: translateY(0%);
+      }
+    }
+
+    @keyframes petal1 {
+      50% {
+        transform: rotate(110deg);
+      }
+      100% {
+        transform: rotate(90deg);
+      }
+    }
+
+    @keyframes petal2 {
+      50% {
+        transform: rotate(-20deg);
+      }
+      100% {
+        transform: rotate(0deg);
+      }
+    }
+
+    #music-container {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: rgba(242, 219, 255, 1);
+      padding: 10px;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    }
+
+    audio {
+      display: block;
+      margin: 0;
+    }
+
+    .envelope {
+      width: 80vw;
+      max-width: 400px;
+      height: 180px;
+      background: rgba(228, 179, 255, 1);
+      position: relative;
+      border-radius: 10px 10px 0 0;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      cursor: pointer;
+    }
+
+    .envelope::before {
+      content: " ";
+      position: absolute;
+      transform: rotate(180deg);
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 0;
+      border-left: 40vw solid transparent;
+      border-right: 40vw solid transparent;
+      border-bottom: 100px solid rgba(242, 219, 255, 1);
+    }
+
+    .envelope::after {
+      content: "YOU HAVE A LETTER";
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Sacramento', cursive;
+      font-size: 18px;
+      color: #000;
+    }
+
+    .read-btn {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: mediumpurple;
+      border: none;
+      border-radius: 5px;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .read-btn:hover {
+      background-color: #FF617A;
+    }
+
+    #read-container {
+      text-align: center;
+    }
+
+    @media screen and (max-width: 600px) {
+      h1 {
+        font-size: 20px;
+      }
+      .rose {
+        width: 50px;
+        height: 100px;
+        left: 70%;
+      }
+    }
+
+    @media screen and (max-width: 400px) {
+      .rose {
+        width: 40px;
+        height: 1p0px;
+        left: 80%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="read-container">
+    <div class="envelope"></div>
+    <button class="read-btn" onclick="openLetter()">Read</button>
+  </div>
+
+  <div class="container" style="display: none;">
+    <div class="letter">
+      <h1>Happy Birthday Alison.</h1>
+      <p>I hope you are happy on your birthday. My wish for you is to have good health and achieve your goals in life, and I will always support you even if I am not by your side. That's all. Happy birthday again.</p>
+    </div>
+    <div class="rose">
+      <div class="flower">
+        <div class="petal"></div>
+        <div class="petal"></div>
+        <div class="petal"></div>
+        <div class="petal"></div>
+        <div class="petal"></div>
+      </div>
+      <div class="leaf">
+        <div class="stem"></div>
+        <div class="leafs"></div>
+        <div class="leafs"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="music-container" style="display: none;">
+    <audio id="background-music" autoplay loop controls>
+      <source src="ssstik.io_1726558267723.ogg" type="audio/ogg">
+    </audio>
+  </div>
+
+  <script>
+    function openLetter() {
+      document.getElementById('read-container').style.display = 'none';
+      document.querySelector('.container').style.display = 'block';
+      document.getElementById('music-container').style.display = 'block';
+      document.getElementById('background-music').play();
+    }
+  </script>
+
+</body>
+</html>
