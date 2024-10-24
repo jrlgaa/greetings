@@ -160,10 +160,7 @@ life = 10
 life2 = 10
 countdown_started = False
 change_interval = 4000
-player_status = {
-    "Player 1": "Waiting for other player...",
-    "Player 2": "Waiting for other player..."
-}
+player_status = {"Player 1": "not ready", "Player 2": "not ready"}
 # Text input variables
 input_text_p1 = ""
 input_text_p2 = ""
@@ -186,18 +183,17 @@ def receive_data():
             try:
                 game_state = pickle.loads(data)
                 if isinstance(game_state, dict):
-                    if 'word' in game_state and 'player1_life' in game_state and 'player2_life' in game_state:
-                        active_string = game_state['word']
-                        life = game_state['player1_life']
-                        life2 = game_state['player2_life']
+                    #if 'word' in game_state and 'player1_life' in game_state and 'player2_life' in game_state:
+                        active_string = game_state.get('word', active_string)
+                        life = game_state.get('player1_life', life)
+                        life2 = game_state.get('player2_life', life2)
                         player_status = game_state.get('player_status', player_status)
-                    else:
-                        print("Received dictionary does not contain expected keys")
                 else:
-                    print("Received data is not a dictionary")
+                    print("Received dictionary does not contain expected keys")
+                """else:
+                    print("Received data is not a dictionary")"""
             except pickle.UnpicklingError as e:
                 print(f"Error unpickling data: {e}")
-
         except ConnectionResetError as e:
             print(f"Connection was reset by the server: {e}")
             break
@@ -215,7 +211,6 @@ def send_data():
         client.send(pickle.dumps(game_state))
     except Exception as e:
         print(f"Error sending data: {e}")
-
 def waiting_lobby():
     global player_status
     lobby_instance = Lobby()  # Instantiate the lobby
@@ -225,36 +220,34 @@ def waiting_lobby():
         player_status["Player 1"] = "ready"
     elif input_active_p2:
         player_status["Player 2"] = "ready"
-
-    send_data()  # Send the updated player status to the server
+    send_data()
     waiting = True
-
     while waiting:
         screen.fill('BLACK')
         lobby_instance.update()  # Update lobby visuals if needed
         screen.blit(lobby_instance.image, lobby_instance.rect)  # Draw lobby background
 
-        # Font for waiting lobby
+        #font for waiting lobby
         waiting_font = pygame.font.Font('jeriel.ttf', 48)
         player_button_font = pygame.font.Font('jeriel.ttf', 32)
 
         # Display waiting message
         waiting_text = waiting_font.render("Waiting for other player...", True, (0, 255, 255))
         waiting_text_surface = waiting_font.render("Waiting for other player...", True, (0, 0, 0))
-        waiting_rect = waiting_text.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 100))
+        waiting_rect = waiting_text.get_rect(center=(WIDTH - 1110, HEIGHT -750))
         screen.blit(waiting_text_surface, (waiting_rect.x - 2, waiting_rect.y - 2))
         screen.blit(waiting_text, waiting_rect)
 
         # Display player statuses
         p1_status_text = player_button_font.render(f"Player 1: {player_status['Player 1']}", True, (50, 50, 200))
         p1_status_text_surface = player_button_font.render(f"Player 1: {player_status['Player 1']}", True, 'Black')
-        p1_status_rect = p1_status_text.get_rect(topleft=(WIDTH // 2 - 180, HEIGHT // 2 - 50))
+        p1_status_rect = p1_status_text.get_rect(topleft=(WIDTH -1380, HEIGHT - 720))
         screen.blit(p1_status_text_surface, (p1_status_rect.x - 2, p1_status_rect.y - 2))
         screen.blit(p1_status_text, p1_status_rect)
 
         p2_status_text = player_button_font.render(f"Player 2: {player_status['Player 2']}", True, (50, 50, 200))
         p2_status_text_surface = player_button_font.render(f"Player 2: {player_status['Player 2']}", True, 'Black')
-        p2_status_rect = p2_status_text.get_rect(topleft=(WIDTH // 2 - 180, HEIGHT // 2))
+        p2_status_rect = p2_status_text.get_rect(topleft=(WIDTH - 1380, HEIGHT - 685))
         screen.blit(p2_status_text_surface, (p2_status_rect.x - 2, p2_status_rect.y - 2))
         screen.blit(p2_status_text, p2_status_rect)
 
@@ -264,6 +257,7 @@ def waiting_lobby():
         if player_status["Player 1"] == "ready" and player_status["Player 2"] == "ready":
             waiting = False
             countdown()  # Start countdown to the game
+
         # Allow pygame events for quitting, etc.
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
