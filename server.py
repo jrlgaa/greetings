@@ -2,30 +2,21 @@ import socket
 import threading
 import pickle
 
-# Define server details
+# Server configuration
 SERVER_IP = '192.168.1.17'  # Replace with your local IPv4 address
 PORT = 5555
 ADDR = (SERVER_IP, PORT)
 
-# Create a socket object
+# Initialize server
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+server.bind(ADDR)
+server.listen()
 
-# Bind and listen
-try:
-    server.bind(ADDR)
-    server.listen()
-    print(f"Server is running on {SERVER_IP}:{PORT}")
-except Exception as e:
-    print(f"Error starting server: {e}")
-    exit(1)
-
-# Store connected clients and game state
 clients = []
 game_state = {
-    "players": {},  # Store player info by address
-    "game_started": False  # Track if the game has started
+    "players": {},  # Track each player's readiness status by address
+    "game_started": False
 }
-
 
 def broadcast_game_state():
     """Send the current game state to all connected clients."""
@@ -36,53 +27,47 @@ def broadcast_game_state():
         except Exception as e:
             print(f"Error sending data to client: {e}")
 
-
 def handle_client(conn, addr):
+    """Handle communication with a connected client."""
     print(f"New connection: {addr}")
-
-    # Initialize player data
-    game_state["players"][addr] = {
-        "position": (0, 0),  # Example initial position
-        "ready": False  # Player readiness
-    }
-    clients.append(conn)  # Add client connection
-
-    # Send updated game state to all clients
-    broadcast_game_state()
+    game_state["players"][addr] = {"ready": False}
+    clients.append(conn)
+    broadcast_game_state()  # Notify all clients of new connection
 
     while True:
         try:
-            # Receive data from the client
             data = conn.recv(4096)
             if not data:
                 print(f"Connection closed by {addr}")
                 break
 
-            # Deserialize and update game state
+            # Update player readiness status from client
             updated_state = pickle.loads(data)
-            if isinstance(updated_state, dict):
-                game_state["players"][addr].update(updated_state)
+            if isinstance(updated_state, dict) and "ready" in updated_state:
+                game_state["players"][addr]["ready"] = updated_state["ready"]
 
-                # Broadcast the updated game state
-                broadcast_game_state()
+                # Check if all players are ready to start the game
+                if all(player["ready"] for player in game_state["players"].values()) and len(game_state["players"]) == 2:
+                    game_state["game_started"] = True
+
+                broadcast_game_state()  # Update all clients with the latest game state
         except Exception as e:
             print(f"Error handling data from {addr}: {e}")
             break
 
-    # Handle client disconnection
+    # Clean up on disconnect
     clients.remove(conn)
     del game_state["players"][addr]
     conn.close()
     print(f"Client {addr} disconnected")
     broadcast_game_state()
+
 def start_server():
-    """Start the server and accept client connections."""
     print("Server is starting...")
     while True:
         conn, addr = server.accept()
         thread = threading.Thread(target=handle_client, args=(conn, addr))
         thread.start()
-
 
 if __name__ == "__main__":
     try:
