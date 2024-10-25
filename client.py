@@ -26,7 +26,7 @@ except Exception as e:
 class Lobby(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.sprites = [pygame.image.load(f'C:\\Users\\user\\PycharmProjects\\pythonProject\\waiting\\tile{i}.png') for i in range(1, 49)]
+        self.sprites = [pygame.image.load(f'C:\\Users\\lenovo\\PycharmProjects\\Project\\waiting\\tile{i}.png') for i in range(1, 49)]
         self.current_sprite = 0
         self.image = self.sprites[self.current_sprite]
         # Scale the background image to fit the screen
